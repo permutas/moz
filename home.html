@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dashboard do Usuário</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+      background-image: linear-gradient(to right, #4facfe, #00f2fe);
+      margin: 0;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+    .container {
+      max-width: 800px;
+      background: #fff;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+    }
+    .user-card {
+      background: #f8f9fa;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 15px;
+      border-left: 5px solid #007bff;
+    }
+    .clickable-id {
+      color: #007bff;
+      cursor: pointer;
+      user-select: all;
+    }
+    .admin-link {
+      color: yellow;
+      cursor: pointer;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Olá! Aqui estão suas informações:</h2>
+    <div id="userData" class="mb-4"></div>
+
+    <h4>Usuários interessados a permutar para o seu local actual de trabalho:</h4>
+    <div id="interessadosList"></div>
+
+    <div class="text-center mt-4">
+      <a href="logout.html" class="btn btn-outline-danger">Terminar Sessão</a>
+    </div>
+
+    <!-- Adicionando o link de "Admin?" -->
+    <div class="text-center mt-4">
+      <span class="admin-link" onclick="window.location.href='admin.html'">Admin?</span>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
+    import { getFirestore, doc, getDoc, getDocs, updateDoc, collection } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBisN5rWYAm1RULEtLt2Rr5rTOwoJoobyw",
+      authDomain: "permutas-70e20.firebaseapp.com",
+      projectId: "permutas-70e20",
+      storageBucket: "permutas-70e20.appspot.com",
+      messagingSenderId: "675438868569",
+      appId: "1:675438868569:web:d46be8ea0e68c999505948",
+      measurementId: "G-EF87P85NTN"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        const userRef = doc(db, 'users', user.uid);
+        try {
+          const userSnap = await getDoc(userRef);
+          if (userSnap.exists()) {
+            const userData = userSnap.data();
+
+            if (userData.aprovacao === undefined || userData.aprovacao.toLowerCase() !== "aprovado") {
+              if (userData.aprovacao === undefined) {
+                await updateDoc(userRef, {
+                  aprovacao: "não aprovado",
+                  mensagemAprovacao: "Ligue para 863614176/850320411 ou envie mensagem pelo whatsapp: +258863614176"
+                });
+                userData.aprovacao = "não aprovado";
+                userData.mensagemAprovacao = "Ligue para 863614176/850320411 ou envie mensagem pelo whatsapp: +258863614176";
+              }
+
+              document.getElementById('userData').innerHTML = `
+                <p><strong>Nome:</strong> ${userData.name}</p>
+                <p><strong>Email:</strong> ${user.email}</p>
+                <p><strong>Carreira:</strong> ${userData.carreira}</p>
+                <p><strong>Nomeação:</strong> ${userData.nomeacao}</p>
+                <p><strong>Ministério:</strong> ${userData.ministerio}</p>
+                <p><strong>Província de Trabalho:</strong> ${userData.provincia}</p>
+                <p><strong>Distrito de Trabalho:</strong> ${userData.distrito}</p>
+                <p><strong>Local Pretendido:</strong> ${userData.petendido}</p>
+                <p><strong>Celular (Contato):</strong> ${userData.celular_contato}</p>
+                <p><strong>Celular (Pessoal):</strong> ${userData.celular_pessoal}</p>
+                <p><strong>Importante:</strong> Clique no ID abaixo para copiá-lo e envie ao administrador para aprovação:</p>
+                <p><strong>Seu ID do Usuario:</strong>
+                  <span id="userId" class="clickable-id" title="Clique para copiar">${user.uid}</span>
+                  <small id="copyMsg" style="color:green; display:none;">ID copiado!</small>
+                </p>
+                <p><strong>Estado de aprovação:</strong> ${userData.aprovacao}</p>
+                <p>${userData.mensagemAprovacao}</p>
+              `;
+
+              document.getElementById('interessadosList').innerHTML = `
+                <p><strong>Atenção:</strong> Deve ser aprovado primeiro para veres os resuldados da sua pesquisa. Envie o ID do usuario acima para os numeros listados para ser aprovado.</p>
+              `;
+            } else {
+              document.getElementById('userData').innerHTML = `
+                <p><strong>Nome:</strong> ${userData.name}</p>
+                <p><strong>Email:</strong> ${user.email}</p>
+                <p><strong>Carreira:</strong> ${userData.carreira}</p>
+                <p><strong>Nomeação:</strong> ${userData.nomeacao}</p>
+                <p><strong>Ministério:</strong> ${userData.ministerio}</p>
+                <p><strong>Província de Trabalho:</strong> ${userData.provincia}</p>
+                <p><strong>Distrito de Trabalho:</strong> ${userData.distrito}</p>
+                <p><strong>Local Pretendido:</strong> ${userData.petendido}</p>
+                <p><strong>Celular (Contato):</strong> ${userData.celular_contato}</p>
+                <p><strong>Celular (Pessoal):</strong> ${userData.celular_pessoal}</p>
+                <p><strong>Importante:</strong> Clique no ID abaixo para copiá-lo e envie ao administrador para aprovação:</p>
+                <p><strong>ID:</strong>
+                  <span id="userId" class="clickable-id" title="Clique para copiar">${user.uid}</span>
+                  <small id="copyMsg" style="color:green; display:none;">ID copiado!</small>
+                </p>
+                <p><strong>Aprovação:</strong> ${userData.aprovacao}</p>
+                <p>${userData.mensagemAprovacao}</p>
+              `;
+
+              const allUsersSnap = await getDocs(collection(db, "users"));
+              let interessadosHTML = "";
+              let count = 0;
+
+              allUsersSnap.forEach(docSnap => {
+                const otherUser = docSnap.data();
+                const isDifferentUser = docSnap.id !== user.uid;
+                const petendeMeuDistrito = otherUser.petendido?.includes(userData.distrito);
+                const mesmaCarreira = otherUser.carreira === userData.carreira;
+                const mesmaNomeacao = otherUser.nomeacao === userData.nomeacao;
+                const mesmoMinisterio = otherUser.ministerio === userData.ministerio;
+
+                if (isDifferentUser && petendeMeuDistrito && mesmaCarreira && mesmaNomeacao && mesmoMinisterio) {
+                  count++;
+                  interessadosHTML += `
+                    <div class="user-card">
+                      <p><strong>Nome:</strong> ${otherUser.name}</p>
+                      <p><strong>Email:</strong> ${otherUser.email}</p>
+                      <p><strong>Carreira:</strong> ${otherUser.carreira}</p>
+                      <p><strong>Nomeação:</strong> ${otherUser.nomeacao}</p>
+                      <p><strong>Ministério:</strong> ${otherUser.ministerio}</p>
+                      <p><strong>Distrito de Trabalho:</strong> ${otherUser.distrito}</p>
+                      <p><strong>Local Pretendido:</strong> ${otherUser.petendido}</p>
+                      <p><strong>Celular (Contato):</strong> ${otherUser.celular_contato}</p>
+                      <p><strong>Celular (Pessoal):</strong> ${otherUser.celular_pessoal}</p>
+                    </div>
+                  `;
+                }
+              });
+
+              document.getElementById('interessadosList').innerHTML =
+                count > 0
+                ? interessadosHTML
+                : "<p>Nenhum usuário interessado encontrado no momento, visite sempre para verificar o seu resultado.</p>";
+            }
+
+            // Copiar ID ao clicar
+            setTimeout(() => {
+              const userIdElement = document.getElementById('userId');
+              const copyMsg = document.getElementById('copyMsg');
+              if (userIdElement) {
+                userIdElement.addEventListener('click', () => {
+                  navigator.clipboard.writeText(userIdElement.textContent).then(() => {
+                    copyMsg.style.display = 'inline';
+                    setTimeout(() => {
+                      copyMsg.style.display = 'none';
+                    }, 2000);
+                  });
+                });
+              }
+            }, 100);
+
+          } else {
+            document.getElementById('userData').innerText = "Dados do usuário não encontrados.";
+          }
+        } catch (error) {
+          console.error("Erro ao buscar dados:", error);
+          document.getElementById('userData').innerText = "Erro ao buscar dados do usuário.";
+        }
+      }
+    });
+  </script>
+</body>
+</html>

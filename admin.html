@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-image: linear-gradient(to right, #4facfe, #00f2fe);
+        }
+
+        .container {
+            width: 80%;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: white;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        .unauthorized {
+            color: red;
+            text-align: center;
+            font-size: 24px;
+        }
+
+        .admin-links {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .admin-links a {
+            margin: 0 15px;
+            color: black;
+            text-decoration: none;
+            font-size: 16px;
+        }
+
+        /* Responsividade */
+        @media (max-width: 768px) {
+            .container {
+                width: 90%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Página de Administrador</h1>
+        <div id="adminContent">
+            <!-- O conteúdo será carregado aqui -->
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
+
+        // Configurações do Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyBisN5rWYAm1RULEtLt2Rr5rTOwoJoobyw",
+            authDomain: "permutas-70e20.firebaseapp.com",
+            projectId: "permutas-70e20",
+            storageBucket: "permutas-70e20.appspot.com",
+            messagingSenderId: "675438868569",
+            appId: "1:675438868569:web:d46be8ea0e68c999505948",
+            measurementId: "G-EF87P85NTN"
+        };
+
+        // Inicializa o Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth();
+        const db = getFirestore(app);
+
+        // Função para verificar o estado de autenticação e se o usuário é admin
+        onAuthStateChanged(auth, (user) => {
+            if (!user) {
+                console.log("Usuário não logado. Redirecionando para index.html.");
+                window.location.href = "./index.html";  // Redireciona se o usuário não estiver logado
+            } else {
+                console.log("Usuário logado:", user.email);
+                checkIfAdmin(user);  // Verifica se o usuário é admin
+            }
+        });
+
+        // Função para verificar se o usuário tem o campo 'admin' no Firestore
+        async function checkIfAdmin(user) {
+            const userRef = doc(db, "users", user.uid);
+            const docSnap = await getDoc(userRef);
+
+            if (docSnap.exists()) {
+                const userData = docSnap.data();
+
+                // Verifica se o campo 'admin' existe e é verdadeiro
+                if (userData.admin) {
+                    loadAdminLinks();  // Carrega e exibe o link de atendimentos
+                } else {
+                    showUnauthorizedMessage();  // Exibe mensagem de não autorizado
+                }
+            } else {
+                console.error("Erro: Usuário não encontrado no Firestore.");
+            }
+        }
+
+        // Função para carregar os links de admin
+        function loadAdminLinks() {
+            const adminLinks = `
+                <div class="admin-links">
+                    <a href="aprovacao.html">Aprovacao de usuarios</a>
+                </div>
+            `;
+
+            // Insere o link de atendimentos na página
+            const adminContentDiv = document.getElementById("adminContent");
+            adminContentDiv.innerHTML = adminLinks;
+        }
+
+        // Função para exibir a mensagem "Não autorizado!" se o usuário não for admin
+        function showUnauthorizedMessage() {
+            const adminContentDiv = document.getElementById("adminContent");
+            adminContentDiv.innerHTML = "<h2 class='unauthorized'>Não autorizado! Você não é administrador. Obrigado</h2>";
+        }
+    </script>
+</body>
+</html>

@@ -45,101 +45,252 @@
 </head>
 <body>
 <div class="container" id="mainContainer" style="display: none;">
+  <h2>-----------------------------</h2>
+  <h2>-----------------------------</h2>
+  <h2>-----------------------------</h2>
+  <h2>--------------------------------</h2>
   <h2>Adicione os seguintes dados:</h2>
   <div id="nameSection">
 
-    <!-- Novo dropdown de ministério -->
     <select id="ministerioInput" class="form-control" required>
-      <option value="">Selecione o Ministério</option>
-      <option value="Ministério da Educação e Desenvolvimento Humano">Ministério da Educação e Desenvolvimento Humano</option>
-      <option value="Ministério da Saúde">Ministério da Saúde</option>
-      <option value="Ministério da Justiça, Assuntos Constitucionais e Religiosos">Ministério da Justiça, Assuntos Constitucionais e Religiosos</option>
-      <option value="Ministério do Interior">Ministério do Interior</option>
-      <option value="Ministério da Agricultura e Desenvolvimento Rural">Ministério da Agricultura e Desenvolvimento Rural</option>
-      <option value="Ministério da Economia e Finanças">Ministério da Economia e Finanças</option>
-      <option value="Ministério da Administração Estatal e Função Pública">Ministério da Administração Estatal e Função Pública</option>
+      <option value="">Ministério</option>
+      <option value="Ministério da Educação e Cultura">Ministério da Educação e Cultura</option>
     </select>
 
     <input type="text" id="nameInput" class="form-control" placeholder="Nome Completo" required>
 
     <select id="carreiraInput" class="form-control" required>
-      <option value="">Selecione a Carreira</option>
-      <option value="Carreira1">Carreira 1</option>
-      <option value="Carreira2">Carreira 2</option>
-      <option value="Carreira3">Carreira 3</option>
+      <option value="">Categoria</option>
+      <option value="Carreira1">DN1</option>
+      <option value="Carreira2">DN2</option>
+      <option value="Carreira3">DN3</option>
+      <option value="Carreira4">DN4</option>
+      <option value="Carreira5">DN5</option>
+      <option value="Carreira16">DN6</option>
+      <option value="Carreira6">Inst. e Tecn. Ped. DN1</option>
+      <option value="Carreira7">Inst. Tecn. e Ped. DN2</option>
+      <option value="Carreira8">Inst. e Tecn. Ped. DN3</option>
+      <option value="Carreira9">Inst. e Tecn. Ped. DN4</option>
+      <option value="Carreira10">Inst. e Tecn. Ped. DN5</option>
+      <option value="Carreira11">Inst. Tecn. Ped. DN1</option>
+      <option value="Carreira12">Tecn. Sup. em Adm. Pub.</option>
+      <option value="Carreira13">Tecn. Prof. em Adm. Pub.</option>
+      <option value="Carreira14">Ass. tecn.</option>
+      <option value="Carreira15">Auxiliar</option>
+    </select>
+
+    <select id="classeInput" class="form-control" required>
+      <option value="">Classe</option>
+      <option value="Classe A">A</option>
+      <option value="Classe B">B</option>
+      <option value="Classe C">C</option>
+      <option value="Classe D">D</option>
+      <option value="Classe E">E</option>
+      <option value="Classe U">U</option>
+    </select>
+
+    <select id="escalaoInput" class="form-control" required>
+      <option value="">Escalão</option>
+      <option value="Escalão 1">1</option>
+      <option value="Escalão 2">2</option>
+      <option value="Escalão 3">3</option>
+      <option value="Escalão 4">4</option>
+      <option value="Escalão 5">5</option>
+      <option value="Escalão 6">6</option>
     </select>
 
     <select id="nomeacaoInput" class="form-control" required>
-      <option value="">Selecione a Nomeação</option>
-      <option value="Nomeacao1">Nomeação 1</option>
-      <option value="Nomeacao2">Nomeação 2</option>
-      <option value="Nomeacao3">Nomeação 3</option>
+      <option value="">Nomeação</option>
+      <option value="Nomeacao1">Provisoria</option>
+      <option value="Nomeacao2">Definitiva</option>
     </select>
 
     <select id="provinciaInput" class="form-control" required>
-      <option value="">Selecione a província de trabalho</option>
+      <option value="">Província de trabalho</option>
       <option value="Manica">Manica</option>
       <option value="Sofala">Sofala</option>
       <option value="Tete">Tete</option>
+      <option value="Zambezia">Zambezia</option>
+      <option value="Cabo_Delgado">Cabo Delgado</option>
+      <option value="Niassa">Niassa</option>
+      <option value="Nampula">Nampula</option>
+      <option value="Gaza">Gaza</option>
+      <option value="Inhambane">Inhambane</option>
+      <option value="Maputo_Cidade">Maputo Cidade</option>
+      <option value="Maputo_Provincia">Maputo Provincia</option>
     </select>
 
     <select id="distritoInput" class="form-control" required>
-      <option value="">Selecione o distrito de trabalho</option>
+      <option value="">Distrito de trabalho</option>
     </select>
 
-    <input type="text" id="celularContatoInput" class="form-control" placeholder="Número de Celular (Contato)" maxlength="9" required>
-    <input type="text" id="celularPessoalInput" class="form-control" placeholder="Número de Celular (Pessoal)" maxlength="9" required>
+    <input type="text" id="celularContatoInput" class="form-control" placeholder="Contacto 1" maxlength="9" required>
+    <input type="text" id="celularPessoalInput" class="form-control" placeholder="Contacto 2 (Opcional)" maxlength="9">
 
-    <!-- Dropdown com todos os distritos em ordem alfabética -->
+    <!-- Novo campo de informações adicionais -->
+    <textarea id="informacoesAdicionaisInput" class="form-control" placeholder="Informações adicionais" rows="4"></textarea>
+
     <select id="localDistritoInput" class="form-control">
-      <option value="">Selecione os distritos pretendidos</option>
-      <option value="Angónia">Angónia</option>
-      <option value="Barué">Barué</option>
+      <option value="">Distritos pretendidos</option>
+      <option value="Alto Molocue">Alto Molocue</option>
+      <option value="Ancuabe">Ancuabe</option>
+      <option value="Angoche">Angoche</option>
+      <option value="Angonia">Angonia</option>
+      <option value="Balama">Balama</option>
+      <option value="Barue">Barue</option>
       <option value="Beira">Beira</option>
       <option value="Bilene">Bilene</option>
       <option value="Boane">Boane</option>
       <option value="Buzi">Buzi</option>
+      <option value="Cahora-Bassa">Cahora-Bassa</option>
       <option value="Caia">Caia</option>
-      <option value="Cambulatsitsi">Cambulatsitsi</option>
       <option value="Changara">Changara</option>
+      <option value="Chemba">Chemba</option>
+      <option value="Cheringoma">Cheringoma</option>
+      <option value="Chibabava">Chibabava</option>
       <option value="Chibuto">Chibuto</option>
+      <option value="Chicualacuala">Chicualacuala</option>
+      <option value="Chifunde">Chifunde</option>
+      <option value="Chigubo">Chigubo</option>
+      <option value="Chimbonila">Chimbonila</option>
       <option value="Chimoio">Chimoio</option>
-      <option value="Chiúre">Chiúre</option>
-      <option value="Chókwè">Chókwè</option>
-      <option value="Cidade de Maputo">Cidade de Maputo</option>
+      <option value="Chinde">Chinde</option>
+      <option value="Chiure">Chiure</option>
+      <option value="Chiuta">Chiuta</option>
+      <option value="Chokwe">Chokwe</option>
+      <option value="Chongoene">Chongoene</option>
       <option value="Cuamba">Cuamba</option>
+      <option value="Derre">Derre</option>
+      <option value="Distrito Municipal de KaNyaka">Distrito Municipal de KaNyaka</option>
+      <option value="Distrito Municipal de KaTembe">Distrito Municipal de KaTembe</option>
+      <option value="Distrito Urbano de KaMavota">Distrito Urbano de KaMavota</option>
+      <option value="Distrito Urbano de KaMaxaquene">Distrito Urbano de KaMaxaquene</option>
+      <option value="Distrito Urbano de KaMpfumo">Distrito Urbano de KaMpfumo</option>
+      <option value="Distrito Urbano de KaMubukwana">Distrito Urbano de KaMubukwana</option>
+      <option value="Distrito Urbano de Nlhamankulu">Distrito Urbano de Nlhamankulu</option>
+      <option value="Doa">Doa</option>
       <option value="Dondo">Dondo</option>
+      <option value="Erati">Erati</option>
       <option value="Funhalouro">Funhalouro</option>
+      <option value="Gile">Gile</option>
+      <option value="Gondola">Gondola</option>
       <option value="Gorongosa">Gorongosa</option>
       <option value="Govuro">Govuro</option>
-      <option value="Homoíne">Homoíne</option>
+      <option value="Guija">Guija</option>
+      <option value="Guro">Guro</option>
+      <option value="Gurue">Gurue</option>
+      <option value="Homoine">Homoine</option>
+      <option value="Ibo">Ibo</option>
+      <option value="Ile">Ile</option>
+      <option value="Ilha de Moçambique">Ilha de Moçambique</option>
       <option value="Inhambane">Inhambane</option>
+      <option value="Inharrime">Inharrime</option>
+      <option value="Inhassoro">Inhassoro</option>
+      <option value="Inhassunge">Inhassunge</option>
       <option value="Jangamo">Jangamo</option>
+      <option value="Lago">Lago</option>
+      <option value="Lalaua">Lalaua</option>
+      <option value="Larde">Larde</option>
+      <option value="Lichinga">Lichinga</option>
+      <option value="Limpopo">Limpopo</option>
+      <option value="Liupo">Liupo</option>
+      <option value="Luabo">Luabo</option>
+      <option value="Lugela">Lugela</option>
+      <option value="Mabalane">Mabalane</option>
+      <option value="Mabote">Mabote</option>
+      <option value="Macanga">Macanga</option>
+      <option value="Macate">Macate</option>
+      <option value="Machanga">Machanga</option>
+      <option value="Machaze">Machaze</option>
+      <option value="Macomia">Macomia</option>
       <option value="Macossa">Macossa</option>
+      <option value="Maganja da Costa">aganja da Costa</option>
+      <option value="Magoe">Magoe</option>
       <option value="Magude">Magude</option>
-      <option value="Mandlakazi">Mandlakazi</option>
-      <option value="Manhiça">Manhiça</option>
+      <option value="Majune">Majune</option>
+      <option value="Malema">Malema</option>
+      <option value="Mandimba">Mandimba</option>
+      <option value="Manhica">Manhica</option>
       <option value="Manica">Manica</option>
-      <option value="Marávia">Marávia</option>
+      <option value="Manjacaze">Manjacaze</option>
+      <option value="Mapai">Mapai</option>
+      <option value="Marara">Marara"</option>
+      <option value="Maravia">Maravia</option>
+      <option value="Maringue">Maringue</option>
+      <option value="Marracuene">Marracuene</option>
       <option value="Marromeu">Marromeu</option>
+      <option value="Marrupa">Marrupa</option>
+      <option value="Massangena">Massangena</option>
       <option value="Massinga">Massinga</option>
       <option value="Massingir">Massingir</option>
       <option value="Matola">Matola</option>
+      <option value="Matutuine">Matutuine"</option>
+      <option value="Maua">Maua</option>
+      <option value="Mavago">Mavago</option>
       <option value="Maxixe">Maxixe</option>
+      <option value="Mecanhelas">Mecanhelas</option>
+      <option value="Meconta">Meconta</option>
+      <option value="Mecuburi">Mecuburi</option>
+      <option value="Mecufi">Mecufi</option>
+      <option value="Mecula">Mecula</option>
+      <option value="Meluco">Meluco</option>
+      <option value="Memba">Memba</option>
+      <option value="Metarica">Metarica</option>
+      <option value="Metuge">Metuge</option>
+      <option value="Milange">Milange</option>
       <option value="Moamba">Moamba</option>
       <option value="Moatize">Moatize</option>
-      <option value="Morrumbene">Morrumbene</option>
+      <option value="Mocimboa da Praia">Mocimboa da Praia</option>
+      <option value="Mocuba">Mocuba</option>
+      <option value="Mocubela">Mocubela</option>
+      <option value="Mogincual">Mogincual</option>
+      <option value="Mogovolas">Mogovolas</option>
+      <option value="Molumbo">Molumbo</option>
+      <option value="Moma">Moma</option>
+      <option value="Monapo">Monapo</option>
+      <option value="Montepuez">Montepuez</option>
+      <option value="Mopeia">Mopeia</option>
+      <option value="Morrumbala">Morrumbala</option>
+      <option value="Morrumbene"></option>
+      <option value="Mossuril">Morrumbene</option>
       <option value="Mossurize">Mossurize</option>
       <option value="Muanza">Muanza</option>
+      <option value="Muecate">Muecate</option>
+      <option value="Mueda">Mueda</option>
+      <option value="Muembe">Muembe</option>
+      <option value="Muidumbe">Muidumbe</option>
+      <option value="Mulevala">Mulevala</option>
+      <option value="Murrupula">Murrupula</option>
+      <option value="Mutarara">Mutarara</option>
+      <option value="Nacala Porto">Nacala Porto</option>
+      <option value="Nacala-a-Velha">Nacala-a-Velha</option>
+      <option value="Nacaroa">Nacaroa</option>
       <option value="Namaacha">Namaacha</option>
+      <option value="Namacurra">Namacurra</option>
+      <option value="Namarroi">Namarroi</option>
+      <option value="Nampula">Nampula</option>
+      <option value="Namuno">Namuno</option>
+      <option value="Nangade">Nangade</option>
+      <option value="N'gauma">N'gauma</option>
       <option value="Nhamatanda">Nhamatanda</option>
+      <option value="Nicoadala">Nicoadala</option>
+      <option value="Nipepe">Nipepe</option>
+      <option value="Palma">Palma</option>
       <option value="Panda">Panda</option>
+      <option value="Pebane">Pebane</option>
+      <option value="Pemba">Pemba</option>
+      <option value="Quelimane">Quelimane</option>
+      <option value="Quissanga"></option>
+      <option value="Rapale">Quissanga</option>
+      <option value="Ribaue">Ribaue</option>
+      <option value="Sanga">Sanga</option>
       <option value="Sussundenga">Sussundenga</option>
+      <option value="Tambara">Tambara</option>
       <option value="Tete">Tete</option>
+      <option value="Tsangano">Tsangano</option>
       <option value="Vanduzi">Vanduzi</option>
-      <option value="Vilankulo">Vilankulo</option>
+      <option value="Vilanculos">Vilanculos</option>
       <option value="Xai-Xai">Xai-Xai</option>
-      <option value="Xinavane">Xinavane</option>
       <option value="Zavala">Zavala</option>
       <option value="Zumbo">Zumbo</option>
     </select>
@@ -171,7 +322,6 @@
   const auth = getAuth(app);
   const db = getFirestore(app);
 
-  // Função que verifica se o usuário já tem dados preenchidos
   async function checkUserData() {
     const user = auth.currentUser;
 
@@ -179,30 +329,33 @@
       const userDocRef = doc(db, 'users', user.uid);
       const userDocSnapshot = await getDoc(userDocRef);
 
-      // Se o documento do usuário existir e tiver o campo 'name' preenchido
       if (userDocSnapshot.exists() && userDocSnapshot.data().name) {
-        // Redireciona para a página home.html
         window.location.href = 'home.html';
       } else {
-        // Exibe o formulário caso contrário
-        document.getElementById('mainContainer').style.display = 'block'; // Exibe o conteúdo
+        document.getElementById('mainContainer').style.display = 'block';
       }
     } else {
-      // Se não houver usuário autenticado, também exibe o formulário
-      document.getElementById('mainContainer').style.display = 'block'; // Exibe o conteúdo
+      document.getElementById('mainContainer').style.display = 'block';
     }
   }
 
-  // Verifica os dados do usuário logo após a autenticação
   auth.onAuthStateChanged((user) => {
     checkUserData();
   });
 
-  // Código para a lógica de formulário (como já estava)
+  // Lógica para atualizar o distrito com base na província selecionada
   const provinciaDistritosTrabalho = {
-    "Manica": ["Barué", "Macossa", "Chimoio"],
-    "Sofala": ["Beira", "Buzi", "Caia"],
-    "Tete": ["Changara", "Tete", "Moatize"]
+    "Manica": ["Tambara", "Barue", "Macossa", "Guro", "Vanduzi", "Chimoio", "Manica", "Gondola", "Macate", "Sussundenga", "Mossurize", "Machaze"],
+    "Sofala": ["Beira", "Buzi", "Caia", "Chemba", "Cheringoma", "Chibabava", "Dondo", "Gorongosa", "Machanga", "Maringue", "Marromeu", "Muanza", "Nhamatanda"],
+    "Tete": ["Angonia", "Cahora-Bassa", "Changara", "Chifunde", "Chiuta", "Doa", "Macanga", "Magoe", "Marara", "Maravia", "Moatize", "Mutarara", "Tete", "Tsangano", "Zumbo"],
+    "Zambezia": ["Alto Molocue", "Chinde", "Derre", "Gile", "Gurue", "Ile", "Inhassunge", "Luabo", "Lugela", "Maganja da Costa", "Milange", "Mocuba", "Mocubela", "Molumbo", "Mopeia", "Morrumbala", "Mulevala", "Namacura", "Namarroi", "Nicoadala", "Pebane", "Quelimane"],
+    "Cabo_Delgado": ["Ancuabe", "Balama", "Chiure", "Ibo", "Macomia", "Mecufi", "Meluco", "Metuge", "Mocimboa da Praia", "Montepuez", "Mueda", "Muidumbe", "Namuno", "Nangade", "Palma", "Pemba", "Quissanga"],
+    "Niassa": ["Chimbonila", "Cuamba", "Lago", "Lichinga", "Majune", "Mandimba", "Marrupa", "Maua", "Mavago", "Mecanhelas", "Mecula", "Metarica", "Muembe", "N'gauma", "Nipepe", "Sanga"],
+    "Nampula": ["Angoche", "Erati", "Ilha de Mocambique", "Lalaua", "Larde", "Liupo", "Malema", "Meconta", "Mecuburi", "Memba", "Mogincual", "Mogovolas", "Moma", "Monapo", "Mossuril", "Muecate", "Murrupula", "Nacala-a-Velha", "Nacala Porto", "Nacaroa", "Nampula", "Rapale", "Ribaue"],
+    "Gaza": ["Bilene", "Chibuto", "Chicualacuala", "Chigubo", "Chokwe", "Chongoene", "Guija", "Limpopo", "Mabalane", "Manjacaze", "Mapai", "Massangena", "Massingir", "Xai-Xai"],
+    "Inhambane": ["Funhalouro", "Govuro", "Homoine", "Inhamabane", "Inharrime", "Inhassoro", "Jangamo", "Mabote", "Massinga", "Maxixe", "Morrumbene", "Panda", "Vilanculos", "Zavala"],
+    "Maputo_Cidade": ["Distrito Urbano de KaMpfumo", "Distrito Urbano de NIhamankulu", "Distrito Urbano de KaMaxaquene", "Distrito Urbano de KaMavota", "Distrito Urbano de KaMubukwana", "Distrito Municipal de KaTembe", "Distrito Municipal de KaNyaka"],
+    "Maputo_Provincia": ["Boane", "Magude", "Manhica", "Marracuene", "Matola", "Matutuine", "Moamba", "Namaacha"]
   };
 
   document.getElementById('provinciaInput').addEventListener('change', () => {
@@ -219,58 +372,67 @@
     }
   });
 
-  let distritosSelecionados = []; // Para armazenar os distritos selecionados
+  let distritosSelecionados = [];
 
   document.getElementById('localDistritoInput').addEventListener('change', () => {
     const val = document.getElementById('localDistritoInput').value;
 
     if (val && !distritosSelecionados.includes(val)) {
-      distritosSelecionados.push(val); // Adiciona o distrito selecionado à lista
-      // Atualiza o valor do dropdown para "Adicione outro distrito pretendido"
+      distritosSelecionados.push(val);
       document.getElementById('localDistritoInput').value = "";
       document.getElementById('localDistritoInput').options[0].text = "Adicione outro distrito pretendido";
     }
-    // Atualiza o campo de texto com os distritos selecionados
     document.getElementById('petendidoInput').value = distritosSelecionados.join(', ');
   });
 
   document.getElementById('submitButton').addEventListener('click', async () => {
-    const ministerio = document.getElementById('ministerioInput').value.trim();
+    const ministerio = document.getElementById('ministerioInput').selectedOptions[0].text.trim();
     const name = document.getElementById('nameInput').value.trim();
-    const carreira = document.getElementById('carreiraInput').value.trim();
-    const nomeacao = document.getElementById('nomeacaoInput').value.trim();
-    const provincia = document.getElementById('provinciaInput').value.trim();
-    const distrito = document.getElementById('distritoInput').value.trim();
+    const carreira = document.getElementById('carreiraInput').selectedOptions[0].text.trim();
+    const classe = document.getElementById('classeInput').selectedOptions[0].text.trim();
+    const escalao = document.getElementById('escalaoInput').selectedOptions[0].text.trim();
+    const nomeacao = document.getElementById('nomeacaoInput').selectedOptions[0].text.trim();
+    const provincia = document.getElementById('provinciaInput').selectedOptions[0].text.trim();
+    const distrito = document.getElementById('distritoInput').selectedOptions[0].text.trim();
     const petendido = document.getElementById('petendidoInput').value.trim();
     const celularContato = document.getElementById('celularContatoInput').value.trim();
     const celularPessoal = document.getElementById('celularPessoalInput').value.trim();
+    const informacoesAdicionais = document.getElementById('informacoesAdicionaisInput').value.trim();
     const contactado = document.getElementById('contactadoInput').value;
     const user = auth.currentUser;
 
-    if (user && ministerio && name && carreira && nomeacao && provincia && distrito && celularContato && celularPessoal) {
+    if (user && ministerio && name && carreira && classe && escalao && nomeacao && provincia && distrito && celularContato) {
       try {
-        await setDoc(doc(db, 'users', user.uid), {
+        const userData = {
           email: user.email,
           ministerio,
           name,
           carreira,
+          classe,
+          escalao,
           nomeacao,
           provincia,
           distrito,
           petendido,
           celular_contato: celularContato,
-          celular_pessoal: celularPessoal,
+          celular_pessoal: celularPessoal || null,
+          informacoes_adicionais: informacoesAdicionais,
           contactado
-        });
-        document.getElementById('message').innerText = 'Dados adicionados com sucesso!';
+        };
+
+        await setDoc(doc(db, 'users', user.uid), userData);
         window.location.href = 'home.html';
       } catch (error) {
-        document.getElementById('message').innerText = 'Erro ao adicionar dados: ' + error.message;
+        console.error(error);
+        document.getElementById('message').textContent = 'Erro ao salvar dados';
+        document.getElementById('message').style.color = 'red';
       }
     } else {
-      document.getElementById('message').innerText = 'Por favor, preencha todos os campos.';
+      document.getElementById('message').textContent = 'Por favor, preencha todos os campos obrigatórios.';
+      document.getElementById('message').style.color = 'red';
     }
   });
 </script>
+
 </body>
 </html>

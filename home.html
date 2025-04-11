@@ -47,14 +47,13 @@
     <h2>Olá! Aqui estão suas informações:</h2>
     <div id="userData" class="mb-4"></div>
 
-    <h4>Usuários interessados a permutar para o seu local actual de trabalho:</h4>
+    <h4>Usuários interessados a permutar para o seu local atual de trabalho:</h4>
     <div id="interessadosList"></div>
 
     <div class="text-center mt-4">
       <a href="logout.html" class="btn btn-outline-danger">Terminar Sessão</a>
     </div>
 
-    <!-- Adicionando o link de "Admin?" -->
     <div class="text-center mt-4">
       <span class="admin-link" onclick="window.location.href='admin.html'">Admin?</span>
     </div>
@@ -87,6 +86,7 @@
           if (userSnap.exists()) {
             const userData = userSnap.data();
 
+            // Exibe o estado de aprovação se não estiver aprovado
             if (userData.aprovacao === undefined || userData.aprovacao.toLowerCase() !== "aprovado") {
               if (userData.aprovacao === undefined) {
                 await updateDoc(userRef, {
@@ -98,16 +98,18 @@
               }
 
               document.getElementById('userData').innerHTML = `
-                <p><strong>Nome:</strong> ${userData.name}</p>
-                <p><strong>Email:</strong> ${user.email}</p>
-                <p><strong>Carreira:</strong> ${userData.carreira}</p>
-                <p><strong>Nomeação:</strong> ${userData.nomeacao}</p>
                 <p><strong>Ministério:</strong> ${userData.ministerio}</p>
+                <p><strong>Nome:</strong> ${userData.name}</p>
+                <p><strong>Carreira:</strong> ${userData.carreira || "N/A"}</p>
+                <p><strong>Classe:</strong> ${userData.classe || "N/A"}</p>
+                <p><strong>Escalão:</strong> ${userData.escalao || "N/A"}</p>
+                <p><strong>Nomeação:</strong> ${userData.nomeacao || "N/A"}</p>
                 <p><strong>Província de Trabalho:</strong> ${userData.provincia}</p>
                 <p><strong>Distrito de Trabalho:</strong> ${userData.distrito}</p>
                 <p><strong>Local Pretendido:</strong> ${userData.petendido}</p>
-                <p><strong>Celular (Contato):</strong> ${userData.celular_contato}</p>
-                <p><strong>Celular (Pessoal):</strong> ${userData.celular_pessoal}</p>
+                <p><strong>Contacto 1:</strong> ${userData.celular_contato}</p>
+                <p><strong>Contacto 2:</strong> ${userData.celular_pessoal}</p>
+                <p><strong>Informações Adicionais:</strong> ${userData.informacoes_adicionais || "N/A"}</p> <!-- Novo campo -->
                 <p><strong>Importante:</strong> Clique no ID abaixo para copiá-lo e envie ao administrador para aprovação:</p>
                 <p><strong>Seu ID do Usuario:</strong>
                   <span id="userId" class="clickable-id" title="Clique para copiar">${user.uid}</span>
@@ -118,21 +120,22 @@
               `;
 
               document.getElementById('interessadosList').innerHTML = `
-                <p><strong>Atenção:</strong> Deve ser aprovado primeiro para veres os resuldados da sua pesquisa. Envie o ID do usuario acima para os numeros listados para ser aprovado.</p>
+                <p><strong>Atenção:</strong> Deve ser aprovado primeiro para veres os resultados da sua pesquisa. Envie o ID do usuario acima para os números listados para ser aprovado.</p>
               `;
             } else {
               document.getElementById('userData').innerHTML = `
-                <p><strong>Nome:</strong> ${userData.name}</p>
-                <p><strong>Email:</strong> ${user.email}</p>
-                <p><strong>Carreira:</strong> ${userData.carreira}</p>
-                <p><strong>Nomeação:</strong> ${userData.nomeacao}</p>
                 <p><strong>Ministério:</strong> ${userData.ministerio}</p>
+                <p><strong>Nome:</strong> ${userData.name}</p>
+                <p><strong>Carreira:</strong> ${userData.carreira || "N/A"}</p>
+                <p><strong>Classe:</strong> ${userData.classe || "N/A"}</p>
+                <p><strong>Escalão:</strong> ${userData.escalao || "N/A"}</p>
+                <p><strong>Nomeação:</strong> ${userData.nomeacao || "N/A"}</p>
                 <p><strong>Província de Trabalho:</strong> ${userData.provincia}</p>
                 <p><strong>Distrito de Trabalho:</strong> ${userData.distrito}</p>
                 <p><strong>Local Pretendido:</strong> ${userData.petendido}</p>
-                <p><strong>Celular (Contato):</strong> ${userData.celular_contato}</p>
-                <p><strong>Celular (Pessoal):</strong> ${userData.celular_pessoal}</p>
-                <p><strong>Importante:</strong> Clique no ID abaixo para copiá-lo e envie ao administrador para aprovação:</p>
+                <p><strong>Contacto 1:</strong> ${userData.celular_contato}</p>
+                <p><strong>Contacto 2:</strong> ${userData.celular_pessoal}</p>
+                <p><strong>Informações Adicionais:</strong> ${userData.informacoes_adicionais || "N/A"}</p> <!-- Novo campo -->
                 <p><strong>ID:</strong>
                   <span id="userId" class="clickable-id" title="Clique para copiar">${user.uid}</span>
                   <small id="copyMsg" style="color:green; display:none;">ID copiado!</small>
@@ -152,20 +155,24 @@
                 const mesmaCarreira = otherUser.carreira === userData.carreira;
                 const mesmaNomeacao = otherUser.nomeacao === userData.nomeacao;
                 const mesmoMinisterio = otherUser.ministerio === userData.ministerio;
+                const mesmaClasse = otherUser.classe === userData.classe;
+                const mesmoEscalao = otherUser.escalao === userData.escalao;
 
-                if (isDifferentUser && petendeMeuDistrito && mesmaCarreira && mesmaNomeacao && mesmoMinisterio) {
+                if (isDifferentUser && petendeMeuDistrito && mesmaCarreira && mesmaNomeacao && mesmoMinisterio && mesmaClasse && mesmoEscalao) {
                   count++;
                   interessadosHTML += `
                     <div class="user-card">
-                      <p><strong>Nome:</strong> ${otherUser.name}</p>
-                      <p><strong>Email:</strong> ${otherUser.email}</p>
-                      <p><strong>Carreira:</strong> ${otherUser.carreira}</p>
-                      <p><strong>Nomeação:</strong> ${otherUser.nomeacao}</p>
                       <p><strong>Ministério:</strong> ${otherUser.ministerio}</p>
+                      <p><strong>Nome:</strong> ${otherUser.name}</p>
+                      <p><strong>Carreira:</strong> ${otherUser.carreira}</p>
+                      <p><strong>Classe:</strong> ${otherUser.classe || "N/A"}</p>
+                      <p><strong>Escalão:</strong> ${otherUser.escalao || "N/A"}</p>
+                      <p><strong>Nomeação:</strong> ${otherUser.nomeacao}</p>
                       <p><strong>Distrito de Trabalho:</strong> ${otherUser.distrito}</p>
                       <p><strong>Local Pretendido:</strong> ${otherUser.petendido}</p>
-                      <p><strong>Celular (Contato):</strong> ${otherUser.celular_contato}</p>
-                      <p><strong>Celular (Pessoal):</strong> ${otherUser.celular_pessoal}</p>
+                      <p><strong>Contacto 1:</strong> ${otherUser.celular_contato}</p>
+                      <p><strong>Contacto2:</strong> ${otherUser.celular_pessoal}</p>
+                      <p><strong>Informações Adicionais:</strong> ${otherUser.informacoes_adicionais || "N/A"}</p>
                     </div>
                   `;
                 }

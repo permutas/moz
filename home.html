@@ -86,7 +86,6 @@
           if (userSnap.exists()) {
             const userData = userSnap.data();
 
-            // Exibe o estado de aprovação se não estiver aprovado
             if (userData.aprovacao === undefined || userData.aprovacao.toLowerCase() !== "aprovado") {
               if (userData.aprovacao === undefined) {
                 await updateDoc(userRef, {
@@ -109,7 +108,7 @@
                 <p><strong>Local Pretendido:</strong> ${userData.petendido}</p>
                 <p><strong>Contacto 1:</strong> ${userData.celular_contato}</p>
                 <p><strong>Contacto 2:</strong> ${userData.celular_pessoal}</p>
-                <p><strong>Informações Adicionais:</strong> ${userData.informacoes_adicionais || "N/A"}</p> <!-- Novo campo -->
+                <p><strong>Informações Adicionais:</strong> ${userData.informacoes_adicionais || "N/A"}</p>
                 <p><strong>Importante:</strong> Clique no ID abaixo para copiá-lo e envie ao administrador para aprovação:</p>
                 <p><strong>Seu ID do Usuario:</strong>
                   <span id="userId" class="clickable-id" title="Clique para copiar">${user.uid}</span>
@@ -135,7 +134,7 @@
                 <p><strong>Local Pretendido:</strong> ${userData.petendido}</p>
                 <p><strong>Contacto 1:</strong> ${userData.celular_contato}</p>
                 <p><strong>Contacto 2:</strong> ${userData.celular_pessoal}</p>
-                <p><strong>Informações Adicionais:</strong> ${userData.informacoes_adicionais || "N/A"}</p> <!-- Novo campo -->
+                <p><strong>Informações Adicionais:</strong> ${userData.informacoes_adicionais || "N/A"}</p>
                 <p><strong>ID:</strong>
                   <span id="userId" class="clickable-id" title="Clique para copiar">${user.uid}</span>
                   <small id="copyMsg" style="color:green; display:none;">ID copiado!</small>
@@ -158,34 +157,43 @@
                 const mesmaClasse = otherUser.classe === userData.classe;
                 const mesmoEscalao = otherUser.escalao === userData.escalao;
 
-                if (isDifferentUser && petendeMeuDistrito && mesmaCarreira && mesmaNomeacao && mesmoMinisterio && mesmaClasse && mesmoEscalao) {
-                  count++;
-                  interessadosHTML += `
-                    <div class="user-card">
-                      <p><strong>Ministério:</strong> ${otherUser.ministerio}</p>
-                      <p><strong>Nome:</strong> ${otherUser.name}</p>
-                      <p><strong>Categoria:</strong> ${otherUser.carreira}</p>
-                      <p><strong>Classe:</strong> ${otherUser.classe || "N/A"}</p>
-                      <p><strong>Escalão:</strong> ${otherUser.escalao || "N/A"}</p>
-                      <p><strong>Nomeação:</strong> ${otherUser.nomeacao}</p>
-                      <p><strong>Província de Trabalho:</strong> ${otherUser.provincia}</p>
-                      <p><strong>Distrito de Trabalho:</strong> ${otherUser.distrito}</p>
-                      <p><strong>Local Pretendido:</strong> ${otherUser.petendido}</p>
-                      <p><strong>Contacto 1:</strong> ${otherUser.celular_contato}</p>
-                      <p><strong>Contacto2:</strong> ${otherUser.celular_pessoal}</p>
-                      <p><strong>Informações Adicionais:</strong> ${otherUser.informacoes_adicionais || "N/A"}</p>
-                    </div>
-                  `;
+                if (
+                  isDifferentUser &&
+                  petendeMeuDistrito &&
+                  mesmaCarreira &&
+                  mesmaNomeacao &&
+                  mesmoMinisterio &&
+                  mesmaClasse &&
+                  mesmoEscalao
+                ) {
+                  if (otherUser.aprovacao?.toLowerCase() === "aprovado") {
+                    count++;
+                    interessadosHTML += `
+                      <div class="user-card">
+                        <p><strong>Ministério:</strong> ${otherUser.ministerio}</p>
+                        <p><strong>Nome:</strong> ${otherUser.name}</p>
+                        <p><strong>Categoria:</strong> ${otherUser.carreira}</p>
+                        <p><strong>Classe:</strong> ${otherUser.classe || "N/A"}</p>
+                        <p><strong>Escalão:</strong> ${otherUser.escalao || "N/A"}</p>
+                        <p><strong>Nomeação:</strong> ${otherUser.nomeacao}</p>
+                        <p><strong>Província de Trabalho:</strong> ${otherUser.provincia}</p>
+                        <p><strong>Distrito de Trabalho:</strong> ${otherUser.distrito}</p>
+                        <p><strong>Local Pretendido:</strong> ${otherUser.petendido}</p>
+                        <p><strong>Contacto 1:</strong> ${otherUser.celular_contato}</p>
+                        <p><strong>Contacto2:</strong> ${otherUser.celular_pessoal}</p>
+                        <p><strong>Informações Adicionais:</strong> ${otherUser.informacoes_adicionais || "N/A"}</p>
+                      </div>
+                    `;
+                  }
                 }
               });
 
               document.getElementById('interessadosList').innerHTML =
                 count > 0
-                ? interessadosHTML
-                : "<p>Nenhum usuário interessado encontrado no momento, visite sempre para verificar o seu resultado.</p>";
+                  ? interessadosHTML
+                  : "<p>Nenhum usuário interessado encontrado no momento, visite sempre para verificar o seu resultado.</p>";
             }
 
-            // Copiar ID ao clicar
             setTimeout(() => {
               const userIdElement = document.getElementById('userId');
               const copyMsg = document.getElementById('copyMsg');

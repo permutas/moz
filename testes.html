@@ -1,250 +1,223 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Adicionar Nome</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dashboard do Usuário</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
   <style>
     body {
       font-family: 'Roboto', sans-serif;
       background-image: linear-gradient(to right, #4facfe, #00f2fe);
       margin: 0;
       display: flex;
-      align-items: center;
+      align-items: flex-start;
       justify-content: center;
-      height: 100vh;
-      color: #333;
-      padding: 10px;
+      min-height: 100vh;
+      padding: 20px;
     }
     .container {
-      max-width: 400px;
-      background: linear-gradient(to right, #4facfe, #00f2fe);
+      max-width: 800px;
+      background: #fff;
       padding: 30px;
       border-radius: 10px;
-      box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
     }
-    input, select {
-      margin: 10px 0;
+    .user-card {
+      background: #f8f9fa;
       padding: 15px;
-      width: 100%;
-      font-size: 16px;
-      border: 1px solid #ccc;
       border-radius: 8px;
+      margin-bottom: 15px;
+      border-left: 5px solid #007bff;
     }
-    .btn-custom {
-      width: 100%;
-      margin-top: 10px;
-      padding: 10px;
+    .clickable-id {
+      color: #007bff;
+      cursor: pointer;
+      user-select: all;
     }
-    #processingMessage {
-      font-size: 24px;
-      color: white;
+    .admin-link {
+      color: yellow;
+      cursor: pointer;
+      font-weight: bold;
     }
   </style>
 </head>
 <body>
-<div class="container" id="mainContainer">
-  <h2>Adicione os seguintes dados:</h2>
-  <div id="nameSection">
+  <div class="container">
+    <h2>Olá! Aqui estão suas informações:</h2>
+    <div id="userData" class="mb-4"></div>
 
-    <!-- Novo dropdown de ministério -->
-    <select id="ministerioInput" class="form-control" required>
-      <option value="">Selecione o Ministério</option>
-      <option value="Ministério da Educação e Desenvolvimento Humano">Ministério da Educação e Desenvolvimento Humano</option>
-      <option value="Ministério da Saúde">Ministério da Saúde</option>
-      <option value="Ministério da Justiça, Assuntos Constitucionais e Religiosos">Ministério da Justiça, Assuntos Constitucionais e Religiosos</option>
-      <option value="Ministério do Interior">Ministério do Interior</option>
-      <option value="Ministério da Agricultura e Desenvolvimento Rural">Ministério da Agricultura e Desenvolvimento Rural</option>
-      <option value="Ministério da Economia e Finanças">Ministério da Economia e Finanças</option>
-      <option value="Ministério da Administração Estatal e Função Pública">Ministério da Administração Estatal e Função Pública</option>
-    </select>
+    <h4>Usuários interessados a permutar para o seu local atual de trabalho:</h4>
+    <div id="interessadosList"></div>
 
-    <input type="text" id="nameInput" class="form-control" placeholder="Nome Completo" required>
+    <div class="text-center mt-4">
+      <a href="logout.html" class="btn btn-outline-danger">Terminar Sessão</a>
+    </div>
 
-    <select id="carreiraInput" class="form-control" required>
-      <option value="">Selecione a Carreira</option>
-      <option value="Carreira1">Carreira 1</option>
-      <option value="Carreira2">Carreira 2</option>
-      <option value="Carreira3">Carreira 3</option>
-    </select>
-
-    <select id="nomeacaoInput" class="form-control" required>
-      <option value="">Selecione a Nomeação</option>
-      <option value="Nomeacao1">Nomeação 1</option>
-      <option value="Nomeacao2">Nomeação 2</option>
-      <option value="Nomeacao3">Nomeação 3</option>
-    </select>
-
-    <select id="provinciaInput" class="form-control" required>
-      <option value="">Selecione a província de trabalho</option>
-      <option value="Manica">Manica</option>
-      <option value="Sofala">Sofala</option>
-      <option value="Tete">Tete</option>
-    </select>
-
-    <select id="distritoInput" class="form-control" required>
-      <option value="">Selecione o distrito de trabalho</option>
-    </select>
-
-    <input type="text" id="celularContatoInput" class="form-control" placeholder="Número de Celular (Contato)" maxlength="9" required>
-    <input type="text" id="celularPessoalInput" class="form-control" placeholder="Número de Celular (Pessoal)" maxlength="9" required>
-
-    <!-- Dropdown com todos os distritos em ordem alfabética -->
-    <select id="localDistritoInput" class="form-control">
-      <option value="">Selecione o distrito pretendido</option>
-      <option value="Angónia">Angónia</option>
-      <option value="Barué">Barué</option>
-      <option value="Beira">Beira</option>
-      <option value="Bilene">Bilene</option>
-      <option value="Boane">Boane</option>
-      <option value="Buzi">Buzi</option>
-      <option value="Caia">Caia</option>
-      <option value="Cambulatsitsi">Cambulatsitsi</option>
-      <option value="Changara">Changara</option>
-      <option value="Chibuto">Chibuto</option>
-      <option value="Chimoio">Chimoio</option>
-      <option value="Chiúre">Chiúre</option>
-      <option value="Chókwè">Chókwè</option>
-      <option value="Cidade de Maputo">Cidade de Maputo</option>
-      <option value="Cuamba">Cuamba</option>
-      <option value="Dondo">Dondo</option>
-      <option value="Funhalouro">Funhalouro</option>
-      <option value="Gorongosa">Gorongosa</option>
-      <option value="Govuro">Govuro</option>
-      <option value="Homoíne">Homoíne</option>
-      <option value="Inhambane">Inhambane</option>
-      <option value="Jangamo">Jangamo</option>
-      <option value="Macossa">Macossa</option>
-      <option value="Magude">Magude</option>
-      <option value="Mandlakazi">Mandlakazi</option>
-      <option value="Manhiça">Manhiça</option>
-      <option value="Manica">Manica</option>
-      <option value="Marávia">Marávia</option>
-      <option value="Marromeu">Marromeu</option>
-      <option value="Massinga">Massinga</option>
-      <option value="Massingir">Massingir</option>
-      <option value="Matola">Matola</option>
-      <option value="Maxixe">Maxixe</option>
-      <option value="Moamba">Moamba</option>
-      <option value="Moatize">Moatize</option>
-      <option value="Morrumbene">Morrumbene</option>
-      <option value="Mossurize">Mossurize</option>
-      <option value="Muanza">Muanza</option>
-      <option value="Namaacha">Namaacha</option>
-      <option value="Nhamatanda">Nhamatanda</option>
-      <option value="Panda">Panda</option>
-      <option value="Sussundenga">Sussundenga</option>
-      <option value="Tete">Tete</option>
-      <option value="Vanduzi">Vanduzi</option>
-      <option value="Vilankulo">Vilankulo</option>
-      <option value="Xai-Xai">Xai-Xai</option>
-      <option value="Xinavane">Xinavane</option>
-      <option value="Zavala">Zavala</option>
-      <option value="Zumbo">Zumbo</option>
-    </select>
-
-    <input type="text" id="petendidoInput" class="form-control" placeholder="Local pretendido" required readonly>
-    <input type="hidden" id="contactadoInput" value="não">
-
-    <button id="submitButton" class="btn btn-primary mt-3 d-block mx-auto">OK</button>
-    <a href="logout.html" style="text-decoration: underline; display: block; text-align: center;">Terminar sessão</a>
+    <div class="text-center mt-4">
+      <span class="admin-link" onclick="window.location.href='admin.html'">Admin?</span>
+    </div>
   </div>
-  <p id="message" class="mt-3"></p>
-</div>
 
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
-  import { getAuth } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
-  import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
+    import { getFirestore, doc, getDoc, getDocs, updateDoc, collection } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyBisN5rWYAm1RULEtLt2Rr5rTOwoJoobyw",
-    authDomain: "permutas-70e20.firebaseapp.com",
-    projectId: "permutas-70e20",
-    storageBucket: "permutas-70e20.appspot.com",
-    messagingSenderId: "675438868569",
-    appId: "1:675438868569:web:d46be8ea0e68c999505948"
-  };
+    const firebaseConfig = {
+      apiKey: "AIzaSyBisN5rWYAm1RULEtLt2Rr5rTOwoJoobyw",
+      authDomain: "permutas-70e20.firebaseapp.com",
+      projectId: "permutas-70e20",
+      storageBucket: "permutas-70e20.appspot.com",
+      messagingSenderId: "675438868569",
+      appId: "1:675438868569:web:d46be8ea0e68c999505948",
+      measurementId: "G-EF87P85NTN"
+    };
 
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-  const db = getFirestore(app);
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
 
-  const provinciaDistritosTrabalho = {
-    "Manica": ["Barué", "Macossa", "Chimoio"],
-    "Sofala": ["Beira", "Buzi", "Caia"],
-    "Tete": ["Changara", "Tete", "Moatize"]
-  };
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        const userRef = doc(db, 'users', user.uid);
+        try {
+          const userSnap = await getDoc(userRef);
+          if (userSnap.exists()) {
+            const userData = userSnap.data();
 
-  document.getElementById('provinciaInput').addEventListener('change', () => {
-    const prov = document.getElementById('provinciaInput').value;
-    const distritoSelect = document.getElementById('distritoInput');
-    distritoSelect.innerHTML = '<option value="">Selecione o distrito</option>';
-    if (provinciaDistritosTrabalho[prov]) {
-      provinciaDistritosTrabalho[prov].forEach(d => {
-        const option = document.createElement('option');
-        option.value = d;
-        option.textContent = d;
-        distritoSelect.appendChild(option);
-      });
-    }
-  });
+            if (userData.aprovacao === undefined || userData.aprovacao.toLowerCase() !== "aprovado") {
+              if (userData.aprovacao === undefined) {
+                await updateDoc(userRef, {
+                  aprovacao: "não aprovado",
+                  mensagemAprovacao: "Ligue para 863614176/850320411 ou envie mensagem pelo whatsapp: +258863614176"
+                });
+                userData.aprovacao = "não aprovado";
+                userData.mensagemAprovacao = "Ligue para 863614176/850320411 ou envie mensagem pelo whatsapp: +258863614176";
+              }
 
-  let distritosSelecionados = []; // Para armazenar os distritos selecionados
+              document.getElementById('userData').innerHTML = `
+                <p><strong>Ministério:</strong> ${userData.ministerio}</p>
+                <p><strong>Nome:</strong> ${userData.name}</p>
+                <p><strong>Categoria:</strong> ${userData.carreira || "N/A"}</p>
+                <p><strong>Classe:</strong> ${userData.classe || "N/A"}</p>
+                <p><strong>Escalão:</strong> ${userData.escalao || "N/A"}</p>
+                <p><strong>Nomeação:</strong> ${userData.nomeacao || "N/A"}</p>
+                <p><strong>Província de Trabalho:</strong> ${userData.provincia}</p>
+                <p><strong>Distrito de Trabalho:</strong> ${userData.distrito}</p>
+                <p><strong>Local Pretendido:</strong> ${userData.petendido}</p>
+                <p><strong>Contacto 1:</strong> ${userData.celular_contato}</p>
+                <p><strong>Contacto 2:</strong> ${userData.celular_pessoal}</p>
+                <p><strong>Informações Adicionais:</strong> ${userData.informacoes_adicionais || "N/A"}</p>
+                <p><strong>Importante:</strong> Clique no ID abaixo para copiá-lo e envie ao administrador para aprovação:</p>
+                <p><strong>Seu ID do Usuario:</strong>
+                  <span id="userId" class="clickable-id" title="Clique para copiar">${user.uid}</span>
+                  <small id="copyMsg" style="color:green; display:none;">ID copiado!</small>
+                </p>
+                <p><strong>Estado de aprovação:</strong> ${userData.aprovacao}</p>
+                <p>${userData.mensagemAprovacao}</p>
+              `;
 
-  document.getElementById('localDistritoInput').addEventListener('change', () => {
-    const val = document.getElementById('localDistritoInput').value;
+              document.getElementById('interessadosList').innerHTML = `
+                <p><strong>Atenção:</strong> Deve ser aprovado primeiro para veres os resultados da sua pesquisa. Envie o ID do usuario acima para os números listados para ser aprovado.</p>
+              `;
+            } else {
+              document.getElementById('userData').innerHTML = `
+                <p><strong>Ministério:</strong> ${userData.ministerio}</p>
+                <p><strong>Nome:</strong> ${userData.name}</p>
+                <p><strong>Categoria:</strong> ${userData.carreira || "N/A"}</p>
+                <p><strong>Classe:</strong> ${userData.classe || "N/A"}</p>
+                <p><strong>Escalão:</strong> ${userData.escalao || "N/A"}</p>
+                <p><strong>Nomeação:</strong> ${userData.nomeacao || "N/A"}</p>
+                <p><strong>Província de Trabalho:</strong> ${userData.provincia}</p>
+                <p><strong>Distrito de Trabalho:</strong> ${userData.distrito}</p>
+                <p><strong>Local Pretendido:</strong> ${userData.petendido}</p>
+                <p><strong>Contacto 1:</strong> ${userData.celular_contato}</p>
+                <p><strong>Contacto 2:</strong> ${userData.celular_pessoal}</p>
+                <p><strong>Informações Adicionais:</strong> ${userData.informacoes_adicionais || "N/A"}</p>
+                <p><strong>ID:</strong>
+                  <span id="userId" class="clickable-id" title="Clique para copiar">${user.uid}</span>
+                  <small id="copyMsg" style="color:green; display:none;">ID copiado!</small>
+                </p>
+                <p><strong>Estado de aprovação:</strong> ${userData.aprovacao}</p>
+                <p>${userData.mensagemAprovacao}</p>
+              `;
 
-    if (val && !distritosSelecionados.includes(val)) {
-      distritosSelecionados.push(val); // Adiciona o distrito selecionado à lista
-      // Atualiza o valor do dropdown para "Adicione outro distrito pretendido"
-      document.getElementById('localDistritoInput').value = "";
-      document.getElementById('localDistritoInput').options[0].text = "Adicione outro distrito pretendido";
-    }
-    // Atualiza o campo de texto com os distritos selecionados
-    document.getElementById('petendidoInput').value = distritosSelecionados.join(', ');
-  });
+              const allUsersSnap = await getDocs(collection(db, "users"));
+              let interessadosHTML = "";
+              let count = 0;
 
-  document.getElementById('submitButton').addEventListener('click', async () => {
-    const ministerio = document.getElementById('ministerioInput').value.trim();
-    const name = document.getElementById('nameInput').value.trim();
-    const carreira = document.getElementById('carreiraInput').value.trim();
-    const nomeacao = document.getElementById('nomeacaoInput').value.trim();
-    const provincia = document.getElementById('provinciaInput').value.trim();
-    const distrito = document.getElementById('distritoInput').value.trim();
-    const petendido = document.getElementById('petendidoInput').value.trim();
-    const celularContato = document.getElementById('celularContatoInput').value.trim();
-    const celularPessoal = document.getElementById('celularPessoalInput').value.trim();
-    const contactado = document.getElementById('contactadoInput').value;
-    const user = auth.currentUser;
+              allUsersSnap.forEach(docSnap => {
+                const otherUser = docSnap.data();
+                const isDifferentUser = docSnap.id !== user.uid;
+                const petendeMeuDistrito = otherUser.petendido?.includes(userData.distrito);
+                const mesmaCarreira = otherUser.carreira === userData.carreira;
+                const mesmaNomeacao = otherUser.nomeacao === userData.nomeacao;
+                const mesmoMinisterio = otherUser.ministerio === userData.ministerio;
+                const mesmaClasse = otherUser.classe === userData.classe;
+                const mesmoEscalao = otherUser.escalao === userData.escalao;
 
-    if (user && ministerio && name && carreira && nomeacao && provincia && distrito && celularContato && celularPessoal) {
-      try {
-        await setDoc(doc(db, 'users', user.uid), {
-          email: user.email,
-          ministerio,
-          name,
-          carreira,
-          nomeacao,
-          provincia,
-          distrito,
-          petendido,
-          celular_contato: celularContato,
-          celular_pessoal: celularPessoal,
-          contactado
-        });
-        document.getElementById('message').innerText = 'Dados adicionados com sucesso!';
-        window.location.href = 'home.html';
-      } catch (error) {
-        document.getElementById('message').innerText = 'Erro ao adicionar dados: ' + error.message;
+                if (
+                  isDifferentUser &&
+                  petendeMeuDistrito &&
+                  mesmaCarreira &&
+                  mesmaNomeacao &&
+                  mesmoMinisterio &&
+                  mesmaClasse &&
+                  mesmoEscalao
+                ) {
+                  if (otherUser.aprovacao?.toLowerCase() === "aprovado") {
+                    count++;
+                    interessadosHTML += `
+                      <div class="user-card">
+                        <p><strong>Ministério:</strong> ${otherUser.ministerio}</p>
+                        <p><strong>Nome:</strong> ${otherUser.name}</p>
+                        <p><strong>Categoria:</strong> ${otherUser.carreira}</p>
+                        <p><strong>Classe:</strong> ${otherUser.classe || "N/A"}</p>
+                        <p><strong>Escalão:</strong> ${otherUser.escalao || "N/A"}</p>
+                        <p><strong>Nomeação:</strong> ${otherUser.nomeacao}</p>
+                        <p><strong>Província de Trabalho:</strong> ${otherUser.provincia}</p>
+                        <p><strong>Distrito de Trabalho:</strong> ${otherUser.distrito}</p>
+                        <p><strong>Local Pretendido:</strong> ${otherUser.petendido}</p>
+                        <p><strong>Contacto 1:</strong> ${otherUser.celular_contato}</p>
+                        <p><strong>Contacto2:</strong> ${otherUser.celular_pessoal}</p>
+                        <p><strong>Informações Adicionais:</strong> ${otherUser.informacoes_adicionais || "N/A"}</p>
+                      </div>
+                    `;
+                  }
+                }
+              });
+
+              document.getElementById('interessadosList').innerHTML =
+                count > 0
+                  ? interessadosHTML
+                  : "<p>Nenhum usuário interessado encontrado no momento, visite sempre para verificar o seu resultado.</p>";
+            }
+
+            setTimeout(() => {
+              const userIdElement = document.getElementById('userId');
+              const copyMsg = document.getElementById('copyMsg');
+              if (userIdElement) {
+                userIdElement.addEventListener('click', () => {
+                  navigator.clipboard.writeText(userIdElement.textContent).then(() => {
+                    copyMsg.style.display = 'inline';
+                    setTimeout(() => {
+                      copyMsg.style.display = 'none';
+                    }, 2000);
+                  });
+                });
+              }
+            }, 100);
+
+          } else {
+            document.getElementById('userData').innerText = "Dados do usuário não encontrados.";
+          }
+        } catch (error) {
+          console.error("Erro ao buscar dados:", error);
+          document.getElementById('userData').innerText = "Erro ao buscar dados do usuário.";
+        }
       }
-    } else {
-      document.getElementById('message').innerText = 'Por favor, preencha todos os campos.';
-    }
-  });
-</script>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    });
+  </script>
 </body>
 </html>

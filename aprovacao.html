@@ -23,12 +23,24 @@
       background-color: #ccc !important;
       border-color: #ccc !important;
     }
+    .table-dark {
+      background-color: black;
+      color: white;
+    }
+    .table-warning {
+      background-color: #f8c107;
+      color: black;
+    }
+    .message-title {
+      text-align: center;
+    }
+    .message-description {
+      text-align: left;
+    }
   </style>
 </head>
 <body>
   <div class="container">
-    <h2 class="mb-4">Usuários Pendentes de Aprovação</h2>
-    <h3><i>Caro administrador, envie a mensagem no whatsapp ou ligue para o usuario para conferir a fidelidade/interesse do mesmo para evitar falsos usuarios. Tudo, confiamos em ti. veja os usuarios nao aprovados na tabela abaixo. Bom trabalho.</i></h3>
     <div id="tabelaUsuarios">
       <p>Verificando autenticação...</p>
     </div>
@@ -54,7 +66,6 @@
     const db = getFirestore(app);
     const tabelaContainer = document.getElementById("tabelaUsuarios");
 
-    // Esperar usuário estar logado
     onAuthStateChanged(auth, async (user) => {
       if (!user) {
         tabelaContainer.innerHTML = `
@@ -67,24 +78,32 @@
       }
 
       try {
-        // Buscar dados do usuário logado na coleção "users"
         const userRef = doc(db, "users", user.uid);
         const userDoc = await getDoc(userRef);
 
         if (!userDoc.exists()) {
-          console.error("Documento do usuário logado não encontrado.");
           tabelaContainer.innerHTML = "<p>Erro: Documento do usuário logado não encontrado.</p>";
           return;
         }
 
         const userDataLogado = userDoc.data();
-        console.log("Usuário logado:", userDataLogado);
-
         const usersSnapshot = await getDocs(collection(db, "users"));
         let html = `
           <table class="table table-striped table-bordered">
-            <thead class="table-dark">
-              <tr>
+            <thead>
+              <tr class="table-warning">
+                <th colspan="7">
+                  <div class="message-title">
+                    <h2>Usuários Pendentes de Aprovação</h2>
+                  </div>
+                  <div class="message-description">
+                    <h3><i>
+                      Caro administrador, envie a mensagem no whatsapp usando o botao ENVIAR MENSAGEM PELO WHATSAPP ou ligue para o usuário atraves do contacto para conferir a fidelidade/interesse do mesmo, antes de aprovar, para evitar falsos usuários. Somente deverá aprovar se te dar a resposta SIM. Tudo, confiamos em ti. Veja os usuários não aprovados na tabela abaixo. Bom trabalho.
+                    </i></h3>
+                  </div>
+                </th>
+              </tr>
+              <tr class="table-dark">
                 <th>ID</th>
                 <th>Nome</th>
                 <th>Contacto</th>
@@ -103,12 +122,10 @@
           const userData = docSnap.data();
           const userId = docSnap.id;
 
-          // Verificar se o usuário não é um administrador e não foi aprovado
           if (!userData.admin && userData.aprovacao?.toLowerCase() !== "aprovado") {
             encontrou = true;
 
-            // Formatando o número de WhatsApp para incluir o código do país e o número
-            const numeroWhatsapp = userData.celular_contato.replace(/\D/g, ''); // Remover caracteres não numéricos
+            const numeroWhatsapp = userData.celular_contato.replace(/\D/g, '');
             const urlWhatsApp = `https://wa.me/258${numeroWhatsapp}?text=${encodeURIComponent(
               `Olá, aqui sou ${userDataLogado.name || 'Administrador'}, administrador do site permuta entre professores de Moçambique. O usuário ${userData.name} mostrou interesse de transferir do distrito de ${userData.distrito} para os distritos de ${userData.petendido}. Gostaria de perceber a manifestação do seu interesse para aprovarmos o seu cadastro, de modo a encontrar alguém interessado para o seu local de trabalho. Posso aprovar? Aguardo atentamente a sua resposta. Obrigado.`
             )}`;
@@ -118,10 +135,7 @@
                 <td>${userId}</td>
                 <td>${userData.name || "Sem nome"}</td>
                 <td>${userData.celular_contato || "Sem contacto"}</td>
-                <td>
-                  <!-- Link do WhatsApp com a mensagem predefinida -->
-                  <a href="${urlWhatsApp}" target="_blank">Enviar no WhatsApp</a>
-                </td>
+                <td><a href="${urlWhatsApp}" target="_blank">Enviar mensagem pelo WhatsApp</a></td>
                 <td>${userData.distrito || "Sem distrito"}</td>
                 <td>${userData.petendido || "Sem local pretendido"}</td>
                 <td>
@@ -135,7 +149,6 @@
         html += `</tbody></table>`;
         tabelaContainer.innerHTML = encontrou ? html : "<p>Nenhum usuário pendente de aprovação.</p>";
 
-        // Botões de aprovação
         document.querySelectorAll('.btn-aprovar').forEach(button => {
           button.addEventListener('click', async () => {
             const id = button.getAttribute('data-id');

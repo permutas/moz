@@ -110,7 +110,7 @@
             // Formatando o número de WhatsApp para incluir o código do país e o número
             const numeroWhatsapp = userData.celular_contato.replace(/\D/g, ''); // Remover caracteres não numéricos
             const urlWhatsApp = `https://wa.me/258${numeroWhatsapp}?text=${encodeURIComponent(
-              `Olá, aqui sou ${userDataLogado.name || 'Administrador'} do site permuta entre professores de Moçambique. O usuário ${userData.name} mostrou interesse de transferir do distrito de ${userData.distrito} para os distritos de ${userData.petendido}. Gostaria de perceber a manifestação do seu interesse para aprovarmos o seu cadastro, de modo a encontrar alguém interessado para o seu local de trabalho. Posso aprovar? Aguardo atentamente a sua resposta. Obrigado.`
+              `Olá, aqui sou ${userDataLogado.name || 'Administrador'}, administrador do site permuta entre professores de Moçambique. O usuário ${userData.name} mostrou interesse de transferir do distrito de ${userData.distrito} para os distritos de ${userData.petendido}. Gostaria de perceber a manifestação do seu interesse para aprovarmos o seu cadastro, de modo a encontrar alguém interessado para o seu local de trabalho. Posso aprovar? Aguardo atentamente a sua resposta. Obrigado.`
             )}`;
 
             html += `

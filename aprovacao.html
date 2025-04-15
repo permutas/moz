@@ -127,7 +127,7 @@
 
             const numeroWhatsapp = userData.celular_contato.replace(/\D/g, '');
             const urlWhatsApp = `https://wa.me/258${numeroWhatsapp}?text=${encodeURIComponent(
-              `Olá, aqui sou ${userDataLogado.name || 'Administrador'}, administrador do site permuta entre professores de Moçambique. O usuário ${userData.name} mostrou interesse de transferir do distrito de ${userData.distrito} para o distrito de ${userData.petendido}. Gostaria de perceber a manifestação do seu interesse para aprovarmos o seu cadastro, de modo a encontrar alguém interessado para o seu local de trabalho. Posso aprovar? Aguardo atentamente a sua resposta. Obrigado.`
+              `Saudações, aqui sou ${userDataLogado.name || 'Administrador'}, administrador do site permuta entre professores de Moçambique. O usuário ${userData.name} mostrou interesse de transferir do distrito de ${userData.distrito} para o distrito de ${userData.petendido}. Gostaria de perceber a manifestação do seu interesse para aprovarmos o seu cadastro, de modo a encontrar alguém interessado para o seu local de trabalho. Posso aprovar? Aguardo atentamente a sua resposta. Obrigado.`
             )}`;
 
             html += `

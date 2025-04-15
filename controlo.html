@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Permutas Encontradas</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+      background-image: linear-gradient(to right, #4facfe, #00f2fe);
+      margin: 0;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+    .container {
+      max-width: 1000px;
+      background: #fff;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+    }
+    table {
+      width: 100%;
+      margin-top: 20px;
+    }
+    th, td {
+      padding: 12px;
+      text-align: left;
+    }
+    th {
+      background-color: #f1f1f1;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th colspan="4" class="text-center fs-4">Usuários com Possibilidade de Permuta</th>
+        </tr>
+        <tr>
+          <th>Usuário Procurando</th>
+          <th>Usuário Encontrado</th>
+          <th>Permutar entre Distritos</th>
+          <th>WhatsApp</th>
+        </tr>
+      </thead>
+      <tbody id="interessadosList">
+        <tr><td colspan="4">Carregando...</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
+    import { getFirestore, getDocs, collection, doc, getDoc } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBisN5rWYAm1RULEtLt2Rr5rTOwoJoobyw",
+      authDomain: "permutas-70e20.firebaseapp.com",
+      projectId: "permutas-70e20",
+      storageBucket: "permutas-70e20.appspot.com",
+      messagingSenderId: "675438868569",
+      appId: "1:675438868569:web:d46be8ea0e68c999505948",
+      measurementId: "G-EF87P85NTN"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) return;
+
+      // Pega nome do logado pelo Firestore
+      const userDocRef = doc(db, "users", user.uid);
+      const userDoc = await getDoc(userDocRef);
+      if (!userDoc.exists()) {
+        console.error("Usuário logado não encontrado no Firestore.");
+        return;
+      }
+
+      const userDataLogado = userDoc.data();
+      const userName = userDataLogado.name || 'Administrador';
+
+      const snapshot = await getDocs(collection(db, "users"));
+      const allUsers = [];
+
+      snapshot.forEach(doc => {
+        const data = doc.data();
+        if (!data.admin && data.aprovacao?.toLowerCase() === "aprovado") {
+          allUsers.push({ ...data, id: doc.id });
+        }
+      });
+
+      const matchedPairs = [];
+      const addedPairs = new Set();
+
+      // Itera sobre todos os usuários e encontra interseções de interesse
+      for (const userA of allUsers) {
+        const userADistrito = (userA.distrito || "").toLowerCase().trim();
+        const userALocais = (userA.petendido || "").toLowerCase().split(",").map(l => l.trim());
+
+        for (const userB of allUsers) {
+          if (userA.id === userB.id) continue;
+
+          const userBDistrito = (userB.distrito || "").toLowerCase().trim();
+          const userBLocais = (userB.petendido || "").toLowerCase().split(",").map(l => l.trim());
+
+          // Verifica a interseção de interesse
+          const userAQuerB = userALocais.includes(userBDistrito);
+          const userBQuerA = userBLocais.includes(userADistrito);
+
+          // Chave única para o par (evita duplicação)
+          const pairKey = [userA.id, userB.id].sort().join("-");
+
+          // Verifica se ambos estão interessados mutuamente
+          if (userAQuerB && userBQuerA && !addedPairs.has(pairKey)) {
+            addedPairs.add(pairKey);
+            matchedPairs.push({
+              userA,
+              userB,
+              userADistrito,
+              userBDistrito,
+              distritosComuns: `${capitalize(userADistrito)} ↔ ${capitalize(userBDistrito)}`
+            });
+          }
+        }
+      }
+
+      const tbody = document.getElementById("interessadosList");
+
+      if (matchedPairs.length === 0) {
+        tbody.innerHTML = "<tr><td colspan='4'>Nenhum usuário interessado encontrado no momento, visite sempre para verificar o seu resultado.</td></tr>";
+      } else {
+        tbody.innerHTML = matchedPairs.map(par => `
+          <tr>
+            <td>${par.userA.name}</td>
+            <td>${par.userB.name}</td>
+            <td>${par.distritosComuns}</td>
+            <td>
+              <a href="https://wa.me/${par.userB.celular_contato}?text=${encodeURIComponent(
+                `Saudações, aqui sou ${userName}, administrador do site permuta entre professores de Moçambique. O(a) Sr(a) ${par.userA.name} pretende permutar consigo, Sr(a) ${par.userB.name}, de distrito de ${capitalize(par.userADistrito)} para distrito de ${capitalize(par.userBDistrito)}, visite a sua pagina do site pelo link: https://permutas.github.io/moz para entrar em contacto com ele/ela. Peco que depois de comunicacao for bem sucessedida, comunique-me para facilitar-nos a gestao na plataforma. Aguardo atenciosamente o seu feedback. Obrigado`
+              )}"
+              target="_blank" class="btn btn-success">Informar o usuario</a>
+            </td>
+          </tr>
+        `).join("");
+      }
+
+      function capitalize(str) {
+        return str.charAt(0).toUpperCase() + str.slice(1);
+      }
+    });
+  </script>
+</body>
+</html>

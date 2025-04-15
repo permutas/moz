@@ -47,7 +47,7 @@
     <h2>Olá! Aqui estão suas informações:</h2>
     <div id="userData" class="mb-4"></div>
 
-    <h4 id="interessadosTitle">Usuários interessados a permutar para o seu local atual de trabalho:</h4>
+    <h4 id="interessadosTitle">Usuários interessados em vir para o seu distrito atual:</h4>
     <div id="interessadosList"></div>
 
     <div class="text-center mt-4">
@@ -62,7 +62,7 @@
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
     import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
-    import { getFirestore, doc, getDoc, getDocs, updateDoc, collection } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
+    import { getFirestore, doc, getDoc, getDocs, collection } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyBisN5rWYAm1RULEtLt2Rr5rTOwoJoobyw",
@@ -103,61 +103,7 @@
         return;
       }
 
-      // Não aprovado
-      if (userData.aprovacao === undefined || userData.aprovacao.toLowerCase() !== "aprovado") {
-        // Buscar todos admins com contacto
-        const adminsSnap = await getDocs(collection(db, "users"));
-        let adminList = [];
-
-        adminsSnap.forEach(adminDoc => {
-          const adminData = adminDoc.data();
-          if (
-            adminData.admin === "admin" &&
-            (adminData.contacto_admin || adminData.contacto_watsapp)
-          ) {
-            adminList.push({
-              nome: adminData.name || "Admin sem nome",
-              contacto: adminData.contacto_admin || "Sem contacto",
-              whatsapp: adminData.contacto_watsapp || "Sem WhatsApp"
-            });
-          }
-        });
-
-        // Exibir dados do usuário não aprovado
-        document.getElementById('userData').innerHTML = `
-          <p><strong>Ministério:</strong> ${userData.ministerio}</p>
-          <p><strong>Nome:</strong> ${userData.name}</p>
-          <p><strong>Categoria:</strong> ${userData.carreira || "N/A"}</p>
-          <p><strong>Classe:</strong> ${userData.classe || "N/A"}</p>
-          <p><strong>Escalão:</strong> ${userData.escalao || "N/A"}</p>
-          <p><strong>Nomeação:</strong> ${userData.nomeacao || "N/A"}</p>
-          <p><strong>Província de Trabalho:</strong> ${userData.provincia}</p>
-          <p><strong>Distrito de Trabalho:</strong> ${userData.distrito}</p>
-          <p><strong>Local Pretendido:</strong> ${userData.petendido}</p>
-          <p><strong>Contacto 1:</strong> ${userData.celular_contato}</p>
-          <p><strong>Contacto 2:</strong> ${userData.celular_pessoal}</p>
-          <p><strong>Informações Adicionais:</strong> ${userData.informacoes_adicionais || "N/A"}</p>
-          <p><strong>ID:</strong>
-            <span id="userId" class="clickable-id" title="Clique para copiar">${user.uid}</span>
-            <small id="copyMsg" style="color:green; display:none;">ID copiado!</small>
-          </p>
-          <p><strong>Estado de aprovação:</strong> ${userData.aprovacao}</p>
-        `;
-
-        // Exibir mensagem para entrar em contato com os administradores
-        let adminMsg = "<p><strong>Você ainda não foi aprovado. Entre em contato com um dos administradores para aprovação, de modo a conseguir visualisar os usuarios interessados. Envie para o administrador desejado o seu nome completo.</strong></p><ul>";
-        adminList.forEach(adm => {
-          adminMsg += `<li><strong>${adm.nome}</strong><br>Contacto: ${adm.contacto}<br>WhatsApp: ${adm.whatsapp}</li>`;
-        });
-        adminMsg += "</ul>";
-
-        document.getElementById('userData').innerHTML += adminMsg;
-
-        document.getElementById('interessadosList').style.display = "none"; // Não exibe a lista de interessados para usuários não aprovados
-        return;
-      }
-
-      // Usuário aprovado
+      // Mostrar dados do usuário
       document.getElementById('userData').innerHTML = `
         <p><strong>Ministério:</strong> ${userData.ministerio}</p>
         <p><strong>Nome:</strong> ${userData.name}</p>
@@ -178,24 +124,40 @@
         <p><strong>Estado de aprovação:</strong> ${userData.aprovacao}</p>
       `;
 
-      // Buscar interessados compatíveis
+      // Verificar usuários interessados
       const allUsersSnap = await getDocs(collection(db, "users"));
       let interessadosHTML = "";
       let count = 0;
 
+      const seuDistrito = (userData.distrito || "").toLowerCase().trim();
+      const seusLocaisPretendidos = (userData.petendido || "").toLowerCase().split(",").map(loc => loc.trim());
+
       allUsersSnap.forEach(docSnap => {
         const otherUser = docSnap.data();
+        const otherUserId = docSnap.id;
+
         if (
-          docSnap.id !== user.uid &&
-          !otherUser.admin &&
-          otherUser.aprovacao?.toLowerCase() === "aprovado" &&
-          otherUser.petendido?.includes(userData.distrito) &&
+          otherUserId === user.uid || // Ignora o próprio usuário
+          otherUser.admin ||
+          otherUser.aprovacao?.toLowerCase() !== "aprovado"
+        ) {
+          return;
+        }
+
+        const locaisOutro = (otherUser.petendido || "").toLowerCase().split(",").map(loc => loc.trim());
+        const distritoOutro = (otherUser.distrito || "").toLowerCase().trim();
+
+        const voceQuerIr = seusLocaisPretendidos.includes(distritoOutro);
+        const outroQuerVir = locaisOutro.includes(seuDistrito);
+
+        const condicaoBase =
           otherUser.carreira === userData.carreira &&
           otherUser.nomeacao === userData.nomeacao &&
           otherUser.ministerio === userData.ministerio &&
           otherUser.classe === userData.classe &&
-          otherUser.escalao === userData.escalao
-        ) {
+          otherUser.escalao === userData.escalao;
+
+        if (voceQuerIr && outroQuerVir && condicaoBase) {
           count++;
           interessadosHTML += `
             <div class="user-card">
@@ -222,20 +184,18 @@
           : "<p>Nenhum usuário interessado encontrado no momento, visite sempre para verificar o seu resultado.</p>";
 
       // Copiar ID
-      setTimeout(() => {
-        const userIdElement = document.getElementById('userId');
-        const copyMsg = document.getElementById('copyMsg');
-        if (userIdElement) {
-          userIdElement.addEventListener('click', () => {
-            navigator.clipboard.writeText(userIdElement.textContent).then(() => {
-              copyMsg.style.display = 'inline';
-              setTimeout(() => {
-                copyMsg.style.display = 'none';
-              }, 2000);
-            });
+      const userIdElement = document.getElementById('userId');
+      const copyMsg = document.getElementById('copyMsg');
+      if (userIdElement) {
+        userIdElement.addEventListener('click', () => {
+          navigator.clipboard.writeText(userIdElement.textContent).then(() => {
+            copyMsg.style.display = 'inline';
+            setTimeout(() => {
+              copyMsg.style.display = 'none';
+            }, 2000);
           });
-        }
-      }, 100);
+        });
+      }
     });
   </script>
 </body>

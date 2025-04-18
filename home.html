@@ -30,28 +30,31 @@
       margin-bottom: 15px;
       border-left: 5px solid #007bff;
     }
-    .clickable-id {
-      color: #007bff;
-      cursor: pointer;
-      user-select: all;
-    }
     .admin-link {
       color: yellow;
       cursor: pointer;
       font-weight: bold;
     }
+    .btn-container {
+      text-align: center;
+      margin-top: 20px;
+    }
   </style>
 </head>
 <body>
   <div class="container">
-    <h2>Olá! Aqui estão suas informações:</h2>
     <div id="userData" class="mb-4"></div>
 
-    <h4 id="interessadosTitle">Usuários interessados em vir para o seu distrito atual:</h4>
+    <!-- Seção de interessados visível apenas para usuários comuns aprovados -->
+    <h4 id="interessadosTitle" style="display:none;">Usuários interessados em vir para o seu distrito atual:</h4>
     <div id="interessadosList"></div>
 
-    <div class="text-center mt-4">
-      <a href="logout.html" class="btn btn-outline-danger">Terminar Sessão</a>
+    <div class="btn-container" id="logoutSection" style="display:none;">
+      <a href="#" id="logoutButton" class="btn btn-outline-danger">Terminar Sessão</a>
+    </div>
+
+    <div class="btn-container" id="updateDataSection" style="display:none;">
+      <button id="updateDataButton" class="btn btn-outline-primary">Atualizar Dados</button>
     </div>
 
     <div class="text-center mt-4">
@@ -61,7 +64,7 @@
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
-    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
     import { getFirestore, doc, getDoc, getDocs, collection } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
 
     const firebaseConfig = {
@@ -78,9 +81,7 @@
     const auth = getAuth(app);
     const db = getFirestore(app);
 
-    onAuthStateChanged(auth, async (user) => {
-      if (!user) return;
-
+    async function mostrarUsuario(user) {
       const userRef = doc(db, 'users', user.uid);
       const userSnap = await getDoc(userRef);
 
@@ -91,25 +92,25 @@
 
       const userData = userSnap.data();
 
-      // Admin
       if (userData.admin === "admin") {
-        document.getElementById('userData').innerHTML = `
-          <p><strong>Administrador:</strong> ${userData.name}</p>
+        let adminHtml = `
+          <p><strong>Nome do Administrador:</strong> ${userData.name}</p>
           <p><strong>Contacto Administrativo:</strong> ${userData.contacto_admin || "N/A"}</p>
-          <p><strong>WhatsApp Administrativo:</strong> ${userData.contacto_watsapp || "N/A"}</p>
+          <p><strong>Whatsapp Administrativo:</strong> ${userData.contacto_watsapp || "N/A"}</p>
         `;
-        document.getElementById('interessadosTitle').style.display = "none";
-        document.getElementById('interessadosList').style.display = "none";
+        document.getElementById('userData').innerHTML = adminHtml;
         return;
       }
 
-      // Mostrar dados do usuário
-      document.getElementById('userData').innerHTML = `
+      const estadoAprovacao = userData.aprovacao || "Não aprovado";
+
+      let html = `
+        <h3>Suas Informações:</h3>
         <p><strong>Ministério:</strong> ${userData.ministerio}</p>
         <p><strong>Nome:</strong> ${userData.name}</p>
-        <p><strong>Categoria:</strong> ${userData.carreira || "N/A"}</p>
-        <p><strong>Classe:</strong> ${userData.classe || "N/A"}</p>
-        <p><strong>Escalão:</strong> ${userData.escalao || "N/A"}</p>
+        <p><strong>Categoria:</strong> ${userData.carreira || "N/A"}</p> <!-- Exibe o valor exato de "carreira" -->
+        <p><strong>Classe:</strong> ${userData.classe || "N/A"}</p> <!-- Exibe o valor exato de "classe" -->
+        <p><strong>Escalão:</strong> ${userData.escalao || "N/A"}</p> <!-- Exibe o valor exato de "escalao" -->
         <p><strong>Nomeação:</strong> ${userData.nomeacao || "N/A"}</p>
         <p><strong>Província de Trabalho:</strong> ${userData.provincia}</p>
         <p><strong>Distrito de Trabalho:</strong> ${userData.distrito}</p>
@@ -117,14 +118,53 @@
         <p><strong>Contacto 1:</strong> ${userData.celular_contato}</p>
         <p><strong>Contacto 2:</strong> ${userData.celular_pessoal}</p>
         <p><strong>Informações Adicionais:</strong> ${userData.informacoes_adicionais || "N/A"}</p>
-        <p><strong>ID:</strong>
-          <span id="userId" class="clickable-id" title="Clique para copiar">${user.uid}</span>
-          <small id="copyMsg" style="color:green; display:none;">ID copiado!</small>
-        </p>
-        <p><strong>Estado de aprovação:</strong> ${userData.aprovacao}</p>
+        <p><strong>Estado de aprovação:</strong> ${estadoAprovacao}</p>
       `;
 
-      // Verificar usuários interessados
+      document.getElementById('userData').innerHTML = html;
+
+      if (estadoAprovacao !== "aprovado") {
+        await mostrarAdmins();
+        return;
+      }
+
+      // Se for usuário comum e aprovado, mostra seção de interessados
+      document.getElementById('interessadosTitle').style.display = 'block';
+      await mostrarInteressados(userData);
+
+      // Exibe o botão de atualizar dados apenas para usuários não administradores
+      if (!userData.admin) {
+        document.getElementById('updateDataSection').style.display = 'block';
+      }
+    }
+
+    async function mostrarAdmins() {
+      const allUsersSnap = await getDocs(collection(db, "users"));
+      let html = `<h4>Administradores disponíveis para contato:</h4>`;
+      let encontrou = false;
+
+      allUsersSnap.forEach(docSnap => {
+        const data = docSnap.data();
+        if (data.admin === "admin") {
+          encontrou = true;
+          html += `
+            <div class="user-card">
+              <p><strong>Nome:</strong> ${data.name}</p>
+              <p><strong>Contacto Administrativo:</strong> ${data.contacto_admin || "N/A"}</p>
+              <p><strong>Whatsapp Administrativo:</strong> ${data.contacto_watsapp || "N/A"}</p>
+            </div>
+          `;
+        }
+      });
+
+      if (!encontrou) {
+        html += "<p>Nenhum administrador encontrado no momento.</p>";
+      }
+
+      document.getElementById('userData').innerHTML += html;
+    }
+
+    async function mostrarInteressados(userData) {
       const allUsersSnap = await getDocs(collection(db, "users"));
       let interessadosHTML = "";
       let count = 0;
@@ -137,12 +177,10 @@
         const otherUserId = docSnap.id;
 
         if (
-          otherUserId === user.uid || // Ignora o próprio usuário
+          otherUserId === userData.uid ||
           otherUser.admin ||
           otherUser.aprovacao?.toLowerCase() !== "aprovado"
-        ) {
-          return;
-        }
+        ) return;
 
         const locaisOutro = (otherUser.petendido || "").toLowerCase().split(",").map(loc => loc.trim());
         const distritoOutro = (otherUser.distrito || "").toLowerCase().trim();
@@ -163,9 +201,9 @@
             <div class="user-card">
               <p><strong>Ministério:</strong> ${otherUser.ministerio}</p>
               <p><strong>Nome:</strong> ${otherUser.name}</p>
-              <p><strong>Categoria:</strong> ${otherUser.carreira}</p>
-              <p><strong>Classe:</strong> ${otherUser.classe || "N/A"}</p>
-              <p><strong>Escalão:</strong> ${otherUser.escalao || "N/A"}</p>
+              <p><strong>Categoria:</strong> ${otherUser.carreira}</p> <!-- Exibe o valor exato de "carreira" -->
+              <p><strong>Classe:</strong> ${otherUser.classe || "N/A"}</p> <!-- Exibe o valor exato de "classe" -->
+              <p><strong>Escalão:</strong> ${otherUser.escalao || "N/A"}</p> <!-- Exibe o valor exato de "escalao" -->
               <p><strong>Nomeação:</strong> ${otherUser.nomeacao}</p>
               <p><strong>Província de Trabalho:</strong> ${otherUser.provincia}</p>
               <p><strong>Distrito de Trabalho:</strong> ${otherUser.distrito}</p>
@@ -182,19 +220,26 @@
         count > 0
           ? interessadosHTML
           : "<p>Nenhum usuário interessado encontrado no momento, visite sempre para verificar o seu resultado.</p>";
+    }
 
-      // Copiar ID
-      const userIdElement = document.getElementById('userId');
-      const copyMsg = document.getElementById('copyMsg');
-      if (userIdElement) {
-        userIdElement.addEventListener('click', () => {
-          navigator.clipboard.writeText(userIdElement.textContent).then(() => {
-            copyMsg.style.display = 'inline';
-            setTimeout(() => {
-              copyMsg.style.display = 'none';
-            }, 2000);
-          });
-        });
+    document.getElementById('logoutButton').addEventListener('click', () => {
+      signOut(auth).then(() => {
+        window.location.href = "index.html";
+      }).catch((error) => {
+        console.error("Erro ao sair: ", error);
+      });
+    });
+
+    document.getElementById('updateDataButton').addEventListener('click', () => {
+      window.location.href = "dados2.html"; // Página para o usuário atualizar seus dados
+    });
+
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) {
+        window.location.href = "index.html";
+      } else {
+        await mostrarUsuario(user);
+        document.getElementById('logoutSection').style.display = 'block';
       }
     });
   </script>

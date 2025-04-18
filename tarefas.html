@@ -7,7 +7,7 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
   <style>
     body {
-      background: #f8f9fa;
+      background-image: linear-gradient(to right, #4facfe, #00f2fe);
       font-family: Arial, sans-serif;
       padding: 30px;
     }
@@ -18,10 +18,6 @@
       padding: 30px;
       border-radius: 10px;
       box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    }
-    .btn[disabled] {
-      background-color: #ccc !important;
-      border-color: #ccc !important;
     }
     .table-dark {
       background-color: black;
@@ -49,7 +45,7 @@
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
     import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
-    import { getFirestore, collection, getDocs, doc, updateDoc, getDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
+    import { getFirestore, collection, getDocs, doc, getDoc } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyBisN5rWYAm1RULEtLt2Rr5rTOwoJoobyw",
@@ -71,7 +67,7 @@
         tabelaContainer.innerHTML = `
           <div class="alert alert-warning">
             Você precisa estar autenticado para visualizar esta página.<br>
-            <a href="index.html" class="btn btn-primary mt-2">Fazer Login</a>
+            <a href="login.html" class="btn btn-primary mt-2">Fazer Login</a>
           </div>
         `;
         return;
@@ -87,6 +83,17 @@
         }
 
         const userDataLogado = userDoc.data();
+
+        // Verifica se o usuário tem o campo 'senior' e se é verdadeiro
+        if (!userDataLogado.senior) {
+          tabelaContainer.innerHTML = `
+            <div class="alert alert-danger">
+              Você não tem permissão para acessar esta página. Apenas usuários "seniores" têm acesso.<br>
+            </div>
+          `;
+          return;
+        }
+
         const usersSnapshot = await getDocs(collection(db, "users"));
         let html = `
           <table class="table table-striped table-bordered">
@@ -110,8 +117,7 @@
                 <th>WhatsApp</th>
                 <th>Distrito de Trabalho</th>
                 <th>Distritos Pretendidos</th>
-                <th>Aprovar</th>
-                <th>Nao aprovar</th>
+                <th>Aprovado Por</th>
               </tr>
             </thead>
             <tbody>
@@ -123,7 +129,7 @@
           const userData = docSnap.data();
           const userId = docSnap.id;
 
-          if (!userData.admin && userData.aprovacao?.toLowerCase() !== "aprovado") {
+          if (!userData.admin && userData.aprovacao?.toLowerCase() === "aprovado") {
             encontrou = true;
 
             const numeroWhatsapp = userData.celular_contato.replace(/\D/g, '');
@@ -139,12 +145,7 @@
                 <td><a href="${urlWhatsApp}" target="_blank">Enviar mensagem pelo WhatsApp</a></td>
                 <td>${userData.distrito || "Sem distrito"}</td>
                 <td>${userData.petendido || "Sem local pretendido"}</td>
-                <td>
-                  <button class="btn btn-success btn-sm btn-aprovar" data-id="${userId}">Aprovar</button>
-                </td>
-                <td>
-                  <button class="btn btn-danger btn-sm btn-apagar" data-id="${userId}">Nao</button>
-                </td>
+                <td>${userData.aprovado_por || "Aprovado por: Desconhecido"}</td>
               </tr>
             `;
           }
@@ -152,42 +153,6 @@
 
         html += `</tbody></table>`;
         tabelaContainer.innerHTML = encontrou ? html : "<p>Nenhum usuário pendente de aprovação.</p>";
-
-        // Aprovar usuário
-        document.querySelectorAll('.btn-aprovar').forEach(button => {
-          button.addEventListener('click', async () => {
-            const id = button.getAttribute('data-id');
-            try {
-              const userRef = doc(db, "users", id);
-              await updateDoc(userRef, {
-                aprovacao: "aprovado",
-                aprovado_por: userDataLogado.name || "Administrador Desconhecido"
-              });
-              button.disabled = true;
-              button.innerText = "Aprovado";
-            } catch (err) {
-              console.error("Erro ao aprovar:", err);
-              alert("Erro ao aprovar usuário.");
-            }
-          });
-        });
-
-        // Apagar usuário
-        document.querySelectorAll('.btn-apagar').forEach(button => {
-          button.addEventListener('click', async () => {
-            const id = button.getAttribute('data-id');
-            if (confirm("Você tem certeza que nao deseja aprovar este usuario?")) {
-              try {
-                const userRef = doc(db, "users", id);
-                await deleteDoc(userRef);
-                button.closest('tr').remove(); // Remove a linha da tabela
-              } catch (err) {
-                console.error("Erro ao apagar:", err);
-                alert("Erro ao apagar usuário.");
-              }
-            }
-          });
-        });
 
       } catch (erro) {
         console.error("Erro ao carregar usuários:", erro);
